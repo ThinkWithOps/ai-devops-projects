@@ -265,27 +265,45 @@ Be specific, not generic. Avoid saying "update to latest" if already using lates
 
             # Get AI explanation
             explanation = self.explain_vulnerability(vuln)
-            for line in explanation.split('\n'):
-                if line.strip():
-                    # Add spacing before numbered points
-                    if line.strip().startswith(('**1.', '**2.', '**3.')):
-                        print()  # Blank line before each numbered point
-                    print(f"    {line.strip()}")
+            lines = explanation.split('\n')
+
+            for idx, line in enumerate(lines):
+                stripped = line.strip()
+                if stripped:
+                    # Add spacing before:
+                    # - Numbered points: **1., **2., **3., 1., 2., 3.
+                    # - Bold headings: **Vulnerability, **What, **Why, **How, **Explanation, **Danger
+                    # - But not for the first line
+                    if idx > 0 and (
+                        stripped.startswith(('**1.', '**2.', '**3.', '1.', '2.', '3.')) or
+                        any(stripped.startswith(f'**{word}') for word in ['Vulnerability', 'What', 'Why', 'How', 'Explanation', 'Danger', 'Simple', 'Fix', 'Recommendation'])
+                    ):
+                        print()  # Blank line before section
+
+                    print(f"    {stripped}")
 
             print()  # Add blank line before divider
             print("-" * 80)
     
-    def save_report(self, image_name: str, vulnerabilities: List[Dict], 
+    def save_report(self, image_name: str, vulnerabilities: List[Dict],
                    summary: str, filename: str):
         """
         Save report to a JSON file.
-        
+
         Args:
             image_name: Name of the scanned image
             vulnerabilities: List of vulnerabilities
             summary: AI-generated summary
             filename: Output filename
         """
+        import os
+
+        # Create directory if it doesn't exist
+        output_dir = os.path.dirname(filename)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            print(f"📁 Created directory: {output_dir}")
+
         report = {
             "image": image_name,
             "scan_date": datetime.now().isoformat(),
@@ -293,10 +311,10 @@ Be specific, not generic. Avoid saying "update to latest" if already using lates
             "total_vulnerabilities": len(vulnerabilities),
             "vulnerabilities": vulnerabilities
         }
-        
+
         with open(filename, 'w') as f:
             json.dump(report, f, indent=2)
-        
+
         print(f"\n💾 Report saved to: {filename}")
 
 
