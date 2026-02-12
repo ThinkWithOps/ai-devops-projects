@@ -301,7 +301,36 @@ Important:
 
             # Get AI explanation
             explanation = self.explain_vulnerability(vuln)
+
+            # Remove duplicate sections if AI repeated itself
+            # Split into lines and check for repeated patterns
             lines = explanation.split('\n')
+
+            # Detect if content is repeating (common AI issue)
+            # Look for duplicate "**Vulnerability" or "**1." markers
+            seen_sections = []
+            deduplicated_lines = []
+            in_duplicate = False
+
+            for line in lines:
+                stripped = line.strip()
+                # Check if this line starts a new section
+                if stripped.startswith(('**Vulnerability', '**1.', '1.')):
+                    # If we've seen this section starter before, skip rest (duplicate content)
+                    if stripped in seen_sections:
+                        in_duplicate = True
+                        continue
+                    else:
+                        seen_sections.append(stripped)
+                        in_duplicate = False
+
+                # Skip lines if we're in a duplicate section
+                if in_duplicate:
+                    continue
+
+                deduplicated_lines.append(line)
+
+            lines = deduplicated_lines
 
             prev_was_empty = True  # Track if previous line was content or blank
             for line in lines:
