@@ -260,14 +260,18 @@ updated base image.
 - Python 3.8 or higher
 - 8GB RAM minimum (for Ollama)
 
+> **📝 Note for Windows users:**  
+> The automated `setup.sh` script works on macOS/Linux only.  
+> Windows users should follow the **manual installation steps** below.
+
 ### Step 1: Install Trivy
 
-**macOS:**
+#### **macOS:**
 ```bash
 brew install trivy
 ```
 
-**Ubuntu/Debian:**
+#### **Ubuntu/Debian:**
 ```bash
 sudo apt-get install wget apt-transport-https gnupg lsb-release
 wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
@@ -276,25 +280,89 @@ sudo apt-get update
 sudo apt-get install trivy
 ```
 
-**Windows:**
+#### **Windows:**
+
+> ⚠️ **Note for Windows users:** The `setup.sh` script only works on macOS/Linux. Follow these manual steps instead.
+
+**Option A - Using Scoop (Recommended):**
 ```powershell
-choco install trivy
+# In PowerShell (as Admin)
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+irm get.scoop.sh | iex
+
+# Install Trivy
+scoop install trivy
 ```
 
-Verify installation:
+**Option B - Manual Installation:**
+1. Go to: https://github.com/aquasecurity/trivy/releases/latest
+2. Download: `trivy_X.XX.X_Windows-64bit.zip`
+3. Extract to: `C:\trivy\`
+4. **Add to PATH:**
+   - Press `Win + X` → System → Advanced system settings
+   - Environment Variables → System Variables → Path → Edit
+   - Click **New** → Add `C:\trivy`
+   - Click OK on all windows
+5. **Restart your terminal** (Git Bash/PowerShell)
+
+**Verify installation:**
 ```bash
 trivy --version
 ```
 
+If the command is not recognized, restart your terminal and try again.
+
+---
+
 ### Step 2: Install Ollama
 
-**macOS/Linux:**
+#### **macOS/Linux:**
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
 
-**Windows:**
-Download from [ollama.com](https://ollama.com)
+#### **Windows:**
+
+**Installation:**
+1. Go to https://ollama.com/download
+2. Download **OllamaSetup.exe** (Windows version)
+3. Run the installer
+4. Ollama starts automatically in the background (check system tray)
+
+> 🔍 **Ollama Install Location (Windows):**  
+> `C:\Users\<YOUR_USERNAME>\AppData\Local\Programs\Ollama\`  
+> You should see `ollama.exe` in that folder.
+
+**Add Ollama to Windows PATH** *(Critical for CLI access)*
+
+> ⚠️ **Skip this if** `ollama --version` already works in Git Bash/PowerShell.
+
+**Steps:**
+1. Press `Win + R` → type `sysdm.cpl` → Enter
+2. Go to **Advanced** tab → Click **Environment Variables**
+3. Under **System Variables**, find `Path` → Click **Edit**
+4. Click **New** → Add:  
+   ```
+   C:\Users\<YOUR_USERNAME>\AppData\Local\Programs\Ollama
+   ```
+   *(Replace `<YOUR_USERNAME>` with your actual Windows username)*
+5. Click **OK** → **OK** → **OK**
+6. **Restart your terminal** (Git Bash/PowerShell/CMD)
+
+**Verify installation:**
+```bash
+ollama --version
+```
+
+**Check if Ollama is running:**
+```bash
+# Should return a list of models (empty if none downloaded yet)
+ollama list
+```
+
+If you get "connection refused", Ollama isn't running:
+- Check system tray (bottom-right) for Ollama icon
+- Or manually start it: Search "Ollama" in Start menu and click it
 
 ### Step 3: Download AI Model
 
@@ -358,6 +426,137 @@ python src/docker_scanner.py nginx:alpine
 ```bash
 docker build -t myapp:latest .
 python src/docker_scanner.py myapp:latest
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Windows-Specific Issues
+
+**Issue: `trivy: command not found` after installation**
+
+**Solution:**
+1. Verify Trivy is installed:
+   ```powershell
+   # Check if trivy.exe exists
+   dir "C:\trivy\trivy.exe"
+   # or if using Scoop
+   dir "$HOME\scoop\apps\trivy\current\trivy.exe"
+   ```
+2. Restart your terminal (Git Bash/PowerShell)
+3. If still not working, manually add to PATH (see installation steps above)
+
+---
+
+**Issue: `ollama: command not found` after installation**
+
+**Solution:**
+1. Check if Ollama is running in system tray (bottom-right taskbar)
+2. Restart your terminal
+3. Verify PATH is set correctly:
+   ```powershell
+   $env:Path -split ';' | Select-String "Ollama"
+   ```
+4. If not in PATH, follow the "Add Ollama to Windows PATH" steps above
+
+---
+
+**Issue: `Error: connect ECONNREFUSED 127.0.0.1:11434`**
+
+**Solution:**
+Ollama service isn't running.
+1. Search "Ollama" in Windows Start menu
+2. Click to start it
+3. Check system tray for Ollama icon
+4. Try again: `ollama list`
+
+---
+
+**Issue: Git Bash shows path errors like `/c/Users/...`**
+
+**Solution:**
+This is normal. Git Bash uses Unix-style paths.
+- `/c/Users/YourName/` = `C:\Users\YourName\`
+- Just continue - the script handles this automatically
+
+---
+
+### General Issues
+
+**Issue: Trivy scan is slow (first time)**
+
+**Solution:** 
+```bash
+# Trivy downloads CVE database first time (takes 5-10 min)
+# Subsequent scans are fast
+# Or use cached scan:
+trivy image --cache-dir ~/.trivy-cache nginx:latest
+```
+
+---
+
+**Issue: Ollama not responding**
+
+**Solution:**
+```bash
+# Check if Ollama is running
+curl http://localhost:11434/api/tags
+
+# If not, start it:
+# macOS/Linux: 
+ollama serve
+
+# Windows: Search "Ollama" in Start menu and click it
+
+# In another terminal:
+ollama run llama3.2
+```
+
+---
+
+**Issue: AI explanations are too technical**
+
+**Solution:**
+Modify the prompt in `src/docker_scanner.py` (line ~130):
+```python
+prompt = f"""You are explaining to a developer with 1 year experience.
+
+Vulnerability: {vuln['id']}
+
+Explain in VERY SIMPLE terms (like explaining to a friend):
+1. What is this bug?
+2. Why should I care?
+3. How do I fix it?
+
+Use everyday analogies. Avoid jargon."""
+```
+
+---
+
+**Issue: Python import errors**
+
+**Solution:**
+```bash
+# Make sure you're in the right directory
+cd 01-ai-docker-scanner
+
+# Reinstall dependencies
+pip install -r requirements.txt
+
+# Or use virtual environment:
+python -m venv venv
+
+# Activate (Windows Git Bash):
+source venv/Scripts/activate
+
+# Activate (Windows PowerShell):
+venv\Scripts\activate
+
+# Activate (macOS/Linux):
+source venv/bin/activate
+
+pip install -r requirements.txt
 ```
 
 ---
