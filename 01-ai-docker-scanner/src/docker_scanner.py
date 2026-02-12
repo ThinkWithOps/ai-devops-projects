@@ -301,12 +301,34 @@ Important:
 
             # Get AI explanation
             explanation = self.explain_vulnerability(vuln)
-            for line in explanation.split('\n'):
-                if line.strip():
-                    # Add spacing before numbered points
-                    if line.strip().startswith(('**1.', '**2.', '**3.')):
-                        print()  # Blank line before each numbered point
-                    print(f"    {line.strip()}")
+            lines = explanation.split('\n')
+
+            prev_was_empty = True  # Track if previous line was content or blank
+            for line in lines:
+                stripped = line.strip()
+                if stripped:
+                    # Detect section headers/numbered points that need spacing before them
+                    needs_spacing = (
+                        # Numbered points (with or without asterisks)
+                        stripped.startswith(('**1.', '**2.', '**3.', '1.', '2.', '3.')) or
+                        # Bold question headers
+                        (stripped.startswith('**') and '?' in stripped and stripped.endswith('**')) or
+                        # Bold headings (Explanation, Important, etc.)
+                        any(stripped.startswith(f'**{word}') for word in
+                            ['Vulnerability', 'What', 'Why', 'How', 'Explanation', 'Danger',
+                             'Simple', 'Fix', 'Recommendation', 'Important'])
+                    )
+
+                    # Add blank line before section if:
+                    # 1. It needs spacing AND
+                    # 2. The previous line had content (not already blank)
+                    if needs_spacing and not prev_was_empty:
+                        print()
+
+                    print(f"    {stripped}")
+                    prev_was_empty = False
+                else:
+                    prev_was_empty = True
 
             print()  # Add blank line before divider
             print("-" * 80)
