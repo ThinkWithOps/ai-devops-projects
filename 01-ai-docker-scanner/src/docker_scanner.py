@@ -87,20 +87,28 @@ class DockerScanner:
     def extract_vulnerabilities(self, scan_data: Dict) -> List[Dict]:
         """
         Extract vulnerability information from Trivy scan results.
-        
+
         Args:
             scan_data: Raw scan data from Trivy
-            
+
         Returns:
-            List of vulnerability dictionaries
+            List of vulnerability dictionaries (deduplicated by vulnerability ID)
         """
         vulnerabilities = []
-        
+        seen_vulns = set()  # Track unique vulnerability IDs
+
         # Trivy results are in "Results" array
         for result in scan_data.get("Results", []):
             for vuln in result.get("Vulnerabilities", []):
+                vuln_id = vuln.get("VulnerabilityID", "N/A")
+
+                # Skip if we've already seen this vulnerability ID
+                if vuln_id in seen_vulns:
+                    continue
+
+                seen_vulns.add(vuln_id)
                 vulnerabilities.append({
-                    "id": vuln.get("VulnerabilityID", "N/A"),
+                    "id": vuln_id,
                     "package": vuln.get("PkgName", "N/A"),
                     "version": vuln.get("InstalledVersion", "N/A"),
                     "severity": vuln.get("Severity", "N/A"),
@@ -108,7 +116,7 @@ class DockerScanner:
                     "description": vuln.get("Description", "N/A"),
                     "fixed_version": vuln.get("FixedVersion", "Not available")
                 })
-        
+
         return vulnerabilities
     
     def ask_ollama(self, prompt: str) -> str:
@@ -229,13 +237,18 @@ Be direct and actionable."""
             print(f"    Package: {vuln['package']} ({vuln['version']})")
             print(f"    Fixed in: {vuln['fixed_version']}")
             print(f"\n    🤖 AI Explanation:")
-            
+            print()  # Add blank line after heading
+
             # Get AI explanation
             explanation = self.explain_vulnerability(vuln)
             for line in explanation.split('\n'):
                 if line.strip():
+                    # Add spacing before numbered points
+                    if line.strip().startswith(('**1.', '**2.', '**3.')):
+                        print()  # Blank line before each numbered point
                     print(f"    {line.strip()}")
-            
+
+            print()  # Add blank line before divider
             print("-" * 80)
     
     def save_report(self, image_name: str, vulnerabilities: List[Dict], 
