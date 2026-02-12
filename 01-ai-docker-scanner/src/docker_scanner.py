@@ -57,6 +57,20 @@ class DockerScanner:
         Returns:
             Dictionary containing scan results or None if scan failed
         """
+        # Check if image exists locally
+        check_local = subprocess.run(
+            ["docker", "images", "-q", image_name],
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        
+        if check_local.stdout.strip():
+            print(f"✅ Using local image")
+        else:
+            print(f"⚠️  Image not found locally - Trivy will download from registry")
+            print(f"💡 Tip: Run 'docker pull {image_name}' first for faster scans")
+        
         print(f"🔍 Scanning image: {image_name}...")
         
         try:
@@ -189,19 +203,29 @@ Keep it concise and actionable. Use analogies if helpful."""
         critical_count = sum(1 for v in vulnerabilities if v['severity'] == 'CRITICAL')
         high_count = sum(1 for v in vulnerabilities if v['severity'] == 'HIGH')
         
+        # Extract common packages with issues
+        vulnerable_packages = list(set(v['package'] for v in vulnerabilities[:3]))
+        
         prompt = f"""You are a security consultant reviewing a Docker image scan.
 
 Image: {image_name}
-Total vulnerabilities found: {len(vulnerabilities)}
+Total vulnerabilities: {len(vulnerabilities)}
 - Critical: {critical_count}
 - High: {high_count}
 
+Main vulnerable packages: {', '.join(vulnerable_packages)}
+
+IMPORTANT CONTEXT:
+- If the image tag is "latest", it doesn't mean it's vulnerability-free
+- "latest" just means the most recent build, which may still contain CVEs from base layers
+- Recommend specific alternative images (e.g., alpine variants, specific version tags)
+
 Provide a 3-sentence executive summary:
 1. Overall security posture (good/concerning/critical)
-2. Main risk areas
-3. Top priority action to take
+2. What packages/layers are causing the issues
+3. Specific actionable fix (e.g., "Use nginx:1.27-alpine instead" or "Rebuild with Ubuntu 24.04 base")
 
-Be direct and actionable."""
+Be specific, not generic. Avoid saying "update to latest" if already using latest."""
 
         return self.ask_ollama(prompt)
     
