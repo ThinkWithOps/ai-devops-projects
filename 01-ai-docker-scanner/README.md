@@ -146,6 +146,31 @@ Fix: Update to openssl 1.1.1w or later in your Dockerfile.
 ```
 ✅ *"Now I understand! I'll update the base image."*
 
+### AI Summary with Smart Recommendations
+
+The scanner now provides **intelligent, context-aware recommendations**:
+
+```
+📊 AI SECURITY SUMMARY:
+Security posture: concerning. Main issues in: libssl, libpng, libc-bin.
+Recommendation: Test minimal base images to reduce attack surface.
+
+To compare variants, run:
+    python src/compare_images.py nginx:latest nginx:alpine nginx:slim nginx:distroless
+```
+
+**Important:** The AI suggests variants dynamically based on your image type, not hardcoded recommendations!
+
+### ⚠️ Why We Don't Trust AI Blindly
+
+**Real example from testing:**
+- Scanned `nginx:latest` → 5 HIGH vulnerabilities
+- AI might suggest trying Alpine variants
+- Tested `nginx:1.27-alpine` → 14 HIGH vulnerabilities (WORSE!)
+- Tested `nginx:alpine` → 3 HIGH vulnerabilities (BEST!)
+
+**Lesson:** Always use the comparison tool to verify which variant is actually most secure.
+
 ### Metrics
 
 | Metric | Value |
@@ -417,9 +442,9 @@ python src/docker_scanner.py nginx:latest --ollama-host http://192.168.1.100:114
 python src/docker_scanner.py nginx:1.19
 ```
 
-**Scan a secure image:**
+**Scan and save report:**
 ```bash
-python src/docker_scanner.py nginx:alpine
+python src/docker_scanner.py nginx:latest --output report.json
 ```
 
 **Scan your own image:**
@@ -427,6 +452,32 @@ python src/docker_scanner.py nginx:alpine
 docker build -t myapp:latest .
 python src/docker_scanner.py myapp:latest
 ```
+
+---
+
+### 🆚 Comparing Multiple Images
+
+**NEW:** Use the comparison tool to find the most secure image variant:
+
+```bash
+python src/compare_images.py nginx:latest nginx:alpine nginx:slim nginx:1.27-alpine
+```
+
+**Output:**
+```
+📊 COMPARISON RESULTS
+================================================================================
+Image                                    Total      Critical   High      
+--------------------------------------------------------------------------------
+nginx:alpine                             3          0          3          ✅ BEST
+nginx:latest                             5          0          5            
+nginx:slim                               7          0          7            
+nginx:1.27-alpine                        14         0          14         ⚠️
+
+🏆 RECOMMENDATION: Use nginx:alpine (Lowest vulnerability count: 3)
+```
+
+**The AI scanner automatically suggests which variants to compare based on your image!**
 
 ---
 
@@ -568,7 +619,8 @@ pip install -r requirements.txt
 ├── README.md                 # This file
 ├── requirements.txt          # Python dependencies
 ├── src/
-│   └── docker_scanner.py    # Main scanner script
+│   ├── docker_scanner.py    # Main scanner script
+│   └── compare_images.py    # Image comparison tool
 ├── demo/
 │   ├── screenshot1.png      # Terminal output example
 │   ├── screenshot2.png      # AI explanation example

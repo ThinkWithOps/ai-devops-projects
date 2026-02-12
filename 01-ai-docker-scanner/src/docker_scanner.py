@@ -215,19 +215,55 @@ Total vulnerabilities: {len(vulnerabilities)}
 
 Main vulnerable packages: {', '.join(vulnerable_packages)}
 
-IMPORTANT CONTEXT:
-- If the image tag is "latest", it doesn't mean it's vulnerability-free
-- "latest" just means the most recent build, which may still contain CVEs from base layers
-- Recommend specific alternative images (e.g., alpine variants, specific version tags)
+Provide your response in this EXACT format:
 
-Provide a 3-sentence executive summary:
-1. Overall security posture (good/concerning/critical)
-2. What packages/layers are causing the issues
-3. Specific actionable fix (e.g., "Use nginx:1.27-alpine instead" or "Rebuild with Ubuntu 24.04 base")
+SECURITY_POSTURE: [one of: "good", "concerning", "critical"]
+VULNERABLE_PACKAGES: [list the top 2-3 problem packages]
+REMEDIATION: [general strategy - one sentence]
+VARIANTS_TO_TEST: [comma-separated list of 2-3 image variants to compare, e.g., "alpine,slim,distroless" or "ubuntu,bookworm-slim" - choose based on what would likely help]
 
-Be specific, not generic. Avoid saying "update to latest" if already using latest."""
+Important:
+- For VARIANTS_TO_TEST, suggest realistic Docker image variants (alpine, slim, distroless, ubuntu, bookworm-slim, etc.)
+- Don't suggest specific version numbers
+- Choose variants appropriate for the base image type"""
 
-        return self.ask_ollama(prompt)
+        ai_response = self.ask_ollama(prompt)
+        
+        # Parse the structured response
+        lines = ai_response.strip().split('\n')
+        parsed = {}
+        for line in lines:
+            if ':' in line:
+                key, value = line.split(':', 1)
+                parsed[key.strip()] = value.strip()
+        
+        # Extract base image name (e.g., "nginx" from "nginx:latest")
+        base_image = image_name.split(':')[0]
+        
+        # Build human-readable summary
+        summary_parts = []
+        if 'SECURITY_POSTURE' in parsed:
+            summary_parts.append(f"Security posture: {parsed['SECURITY_POSTURE']}")
+        if 'VULNERABLE_PACKAGES' in parsed:
+            summary_parts.append(f"Main issues in: {parsed['VULNERABLE_PACKAGES']}")
+        if 'REMEDIATION' in parsed:
+            summary_parts.append(f"Recommendation: {parsed['REMEDIATION']}")
+        
+        summary = ". ".join(summary_parts) + "."
+        
+        # Add comparison command with AI-suggested variants
+        if 'VARIANTS_TO_TEST' in parsed:
+            variants = parsed['VARIANTS_TO_TEST'].strip('[]').split(',')
+            variants = [v.strip() for v in variants if v.strip()]
+            
+            # Build comparison command
+            variant_args = ' '.join([f"{base_image}:{v}" for v in variants])
+            comparison_cmd = f"\n\nTo compare variants, run:\n    python src/compare_images.py {image_name} {variant_args}"
+        else:
+            # Fallback if parsing fails
+            comparison_cmd = f"\n\nTo compare variants, run:\n    python src/compare_images.py {image_name} {base_image}:alpine {base_image}:slim"
+        
+        return summary + comparison_cmd
     
     def print_report(self, image_name: str, vulnerabilities: List[Dict], summary: str):
         """
@@ -265,45 +301,27 @@ Be specific, not generic. Avoid saying "update to latest" if already using lates
 
             # Get AI explanation
             explanation = self.explain_vulnerability(vuln)
-            lines = explanation.split('\n')
-
-            for idx, line in enumerate(lines):
-                stripped = line.strip()
-                if stripped:
-                    # Add spacing before:
-                    # - Numbered points: **1., **2., **3., 1., 2., 3.
-                    # - Bold headings: **Vulnerability, **What, **Why, **How, **Explanation, **Danger
-                    # - But not for the first line
-                    if idx > 0 and (
-                        stripped.startswith(('**1.', '**2.', '**3.', '1.', '2.', '3.')) or
-                        any(stripped.startswith(f'**{word}') for word in ['Vulnerability', 'What', 'Why', 'How', 'Explanation', 'Danger', 'Simple', 'Fix', 'Recommendation'])
-                    ):
-                        print()  # Blank line before section
-
-                    print(f"    {stripped}")
+            for line in explanation.split('\n'):
+                if line.strip():
+                    # Add spacing before numbered points
+                    if line.strip().startswith(('**1.', '**2.', '**3.')):
+                        print()  # Blank line before each numbered point
+                    print(f"    {line.strip()}")
 
             print()  # Add blank line before divider
             print("-" * 80)
     
-    def save_report(self, image_name: str, vulnerabilities: List[Dict],
+    def save_report(self, image_name: str, vulnerabilities: List[Dict], 
                    summary: str, filename: str):
         """
         Save report to a JSON file.
-
+        
         Args:
             image_name: Name of the scanned image
             vulnerabilities: List of vulnerabilities
             summary: AI-generated summary
             filename: Output filename
         """
-        import os
-
-        # Create directory if it doesn't exist
-        output_dir = os.path.dirname(filename)
-        if output_dir and not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-            print(f"📁 Created directory: {output_dir}")
-
         report = {
             "image": image_name,
             "scan_date": datetime.now().isoformat(),
@@ -311,10 +329,10 @@ Be specific, not generic. Avoid saying "update to latest" if already using lates
             "total_vulnerabilities": len(vulnerabilities),
             "vulnerabilities": vulnerabilities
         }
-
+        
         with open(filename, 'w') as f:
             json.dump(report, f, indent=2)
-
+        
         print(f"\n💾 Report saved to: {filename}")
 
 

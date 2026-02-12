@@ -1,0 +1,53 @@
+{
+  "image": "nginx:latest",
+  "scan_date": "2026-02-12T12:24:32.023706",
+  "summary": "Here is a 3-sentence executive summary:\n\nOur review of the Docker image scan reveals a concerning security posture due to the presence of high-severity vulnerabilities in libpng16-16t64 and libc-bin. These critical packages, inherited from the base layer, pose a significant risk to the application running on top of this image. To mitigate this issue, we recommend switching to an alternative image that uses a more secure version of nginx, such as nginx:1.27-alpine, which should provide a more up-to-date and patched set of dependencies.",
+  "total_vulnerabilities": 5,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2026-0861",
+      "package": "libc-bin",
+      "version": "2.41-12+deb13u1",
+      "severity": "HIGH",
+      "title": "glibc: Integer overflow in memalign leads to heap corruption",
+      "description": "Passing too large an alignment to the memalign suite of functions (memalign, posix_memalign, aligned_alloc) in the GNU C Library version 2.30 to 2.42 may result in an integer overflow, which could consequently result in a heap corruption.\n\nNote that the attacker must have control over both, the size as well as the alignment arguments of the memalign function to be able to exploit this.  The size parameter must be close enough to PTRDIFF_MAX so as to overflow size_t along with the large alignment argument.  This limits the malicious inputs for the alignment for memalign to the range [1<<62+ 1, 1<<63] and exactly 1<<63 for posix_memalign and aligned_alloc.\n\nTypically the alignment argument passed to such functions is a known constrained quantity (e.g. page size, block size, struct sizes) and is not attacker controlled, because of which this may not be easily exploitable in practice.  An application bug could potentially result in the input alignment being too large, e.g. due to a different buffer overflow or integer overflow in the application or its dependent libraries, but that is again an uncommon usage pattern given typical sources of alignments.",
+      "fixed_version": "Not available"
+    },
+    {
+      "id": "CVE-2026-22695",
+      "package": "libpng16-16t64",
+      "version": "1.6.48-1+deb13u1",
+      "severity": "HIGH",
+      "title": "libpng: libpng: Denial of service and information disclosure via heap buffer over-read in png_image_finish_read",
+      "description": "LIBPNG is a reference library for use in applications that read, create, and manipulate PNG (Portable Network Graphics) raster image files. From 1.6.51 to 1.6.53, there is a heap buffer over-read in the libpng simplified API function png_image_finish_read when processing interlaced 16-bit PNGs with 8-bit output format and non-minimal row stride. This is a regression introduced by the fix for CVE-2025-65018. This vulnerability is fixed in 1.6.54.",
+      "fixed_version": "Not available"
+    },
+    {
+      "id": "CVE-2026-22801",
+      "package": "libpng16-16t64",
+      "version": "1.6.48-1+deb13u1",
+      "severity": "HIGH",
+      "title": "libpng: libpng: Information disclosure and denial of service via integer truncation in simplified write API",
+      "description": "LIBPNG is a reference library for use in applications that read, create, and manipulate PNG (Portable Network Graphics) raster image files. From 1.6.26 to 1.6.53, there is an integer truncation in the libpng simplified write API functions png_write_image_16bit and png_write_image_8bit causes heap buffer over-read when the caller provides a negative row stride (for bottom-up image layouts) or a stride exceeding 65535 bytes. The bug was introduced in libpng 1.6.26 (October 2016) by casts added to silence compiler warnings on 16-bit systems. This vulnerability is fixed in 1.6.54.",
+      "fixed_version": "Not available"
+    },
+    {
+      "id": "CVE-2026-25646",
+      "package": "libpng16-16t64",
+      "version": "1.6.48-1+deb13u1",
+      "severity": "HIGH",
+      "title": "libpng: LIBPNG has a heap buffer overflow in png_set_quantize",
+      "description": "LIBPNG is a reference library for use in applications that read, create, and manipulate PNG (Portable Network Graphics) raster image files. Prior to 1.6.55, an out-of-bounds read vulnerability exists in the png_set_quantize() API function. When the function is called with no histogram and the number of colors in the palette is more than twice the maximum supported by the user's display, certain palettes will cause the function to enter into an infinite loop that reads past the end of an internal heap-allocated buffer. The images that trigger this vulnerability are valid per the PNG specification. This vulnerability is fixed in 1.6.55.",
+      "fixed_version": "Not available"
+    },
+    {
+      "id": "CVE-2025-7425",
+      "package": "libxslt1.1",
+      "version": "1.1.35-1.2+deb13u2",
+      "severity": "HIGH",
+      "title": "libxslt: Heap Use-After-Free in libxslt caused by atype corruption in xmlAttrPtr",
+      "description": "A flaw was found in libxslt where the attribute type, atype, flags are modified in a way that corrupts internal memory management. When XSLT functions, such as the key() process, result in tree fragments, this corruption prevents the proper cleanup of ID attributes. As a result, the system may access freed memory, causing crashes or enabling attackers to trigger heap corruption.",
+      "fixed_version": "Not available"
+    }
+  ]
+}
