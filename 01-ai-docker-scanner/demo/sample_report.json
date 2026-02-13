@@ -1,7 +1,7 @@
 {
   "image": "nginx:latest",
-  "scan_date": "2026-02-12T15:22:23.759091",
-  "summary": "Security posture: concerning. Main issues in: libc-bin, libpng16-16t64. Recommendation: Implementing a comprehensive patch management process and monitoring for new vulnerability releases is crucial to remediate this identified risk..\n\nTo compare variants, run:\n    python src/compare_images.py nginx:latest nginx:alpine nginx:slim",
+  "scan_date": "2026-02-12T15:30:21.241596",
+  "summary": "Security posture: concerning. Main issues in: libpng16-16t64, libc-bin. Recommendation: Implementing a security patch update or applying additional security layers to mitigate vulnerabilities in these critical packages..\n\nTo compare variants, run:\n    python src/compare_images.py nginx:latest nginx:ubuntu nginx:bookworm-slim",
   "total_vulnerabilities": 5,
   "vulnerabilities": [
     {
