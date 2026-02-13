@@ -44,12 +44,3 @@ Thumbs.db
 !demo/sample_report.json
 nohup.out
 *.log
-
-# Documentation files (private)
-.github/IMPLEMENTATION_GUIDE.md
-.github/youtube-script.md
-.github/START_HERE.md
-.github/youtube-project-builder-prompt-template.md
-.github/Projects-roadmap.md
-.github/winnigformula.md
-.github/thumbnail.md
