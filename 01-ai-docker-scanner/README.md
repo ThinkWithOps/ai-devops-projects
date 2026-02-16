@@ -622,8 +622,6 @@ pip install -r requirements.txt
 │   ├── docker_scanner.py    # Main scanner script
 │   └── compare_images.py    # Image comparison tool
 ├── demo/
-│   ├── screenshot1.png      # Terminal output example
-│   ├── screenshot2.png      # AI explanation example
 │   └── sample_report.json   # Example JSON output
 └── .gitignore               # Ignore venv, cache, etc.
 ```
