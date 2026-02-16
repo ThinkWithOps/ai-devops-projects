@@ -666,7 +666,7 @@ MIT License - feel free to use this in your own projects!
 ## 📧 Contact
 
 **YouTube:** [ThinkWithOps](https://youtube.com/@thinkwithops)  
-**GitHub:** [Your GitHub](https://github.com/yourusername)
+**GitHub:** [GitHub](https://github.com/ThinkWithOps)
 
 ---
 
