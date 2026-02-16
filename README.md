@@ -53,7 +53,7 @@ Each project has a corresponding tutorial on YouTube:
 
 **Channel:** [@ThinkWithOps](https://youtube.com/@thinkwithops)
 
-**Playlist:** [AI + DevOps Projects](link)
+**Playlist:** [AI DevOps Projects: From Beginner to Portfolio](https://www.youtube.com/playlist?list=PLGPNANCHT7bMFOcXEddI6xFdhTkH45I8I)
 
 ---
 
