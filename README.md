@@ -82,8 +82,7 @@ cd ai-devops-projects/01-ai-docker-scanner
 ## 📧 Connect
 
 - **YouTube:** [@ThinkWithOps](https://youtube.com/@thinkwithops)
-- **LinkedIn:** [Your LinkedIn]
-- **Twitter:** [@ThinkWithOps]
+- **LinkedIn:** [@LinkedIn](https://www.linkedin.com/in/b-vijaya/)
 
 ---
 
