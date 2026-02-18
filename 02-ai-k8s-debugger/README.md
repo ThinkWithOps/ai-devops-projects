@@ -263,11 +263,19 @@ brew install minikube
 
 **Windows:**
 ```powershell
-# Using Chocolatey
+# Using Chocolatey (in PowerShell as Admin)
 choco install minikube
 
 # Or download from: https://minikube.sigs.k8s.io/docs/start/
 ```
+
+> **⚠️ Important for GitBash users:**  
+> After installing with Chocolatey, add to GitBash PATH:
+> ```bash
+> echo 'export PATH="$PATH:/c/ProgramData/chocolatey/bin"' >> ~/.bashrc
+> source ~/.bashrc
+> ```
+> Then restart GitBash.
 
 **Ubuntu/Linux:**
 ```bash
@@ -472,14 +480,29 @@ minikube delete
 
 ## 🔧 Troubleshooting
 
-### Issue: "kubectl: command not found"
+### Issue: "kubectl: command not found" or "minikube: command not found"
 
-**Solution:**
+**Solution (Windows GitBash users):**
+
+If you installed via Chocolatey in PowerShell but GitBash doesn't recognize the commands:
+
 ```bash
-# Verify kubectl is installed
-which kubectl
+# Add Chocolatey bin to GitBash PATH
+echo 'export PATH="$PATH:/c/ProgramData/chocolatey/bin"' >> ~/.bashrc
+source ~/.bashrc
 
-# If not found, reinstall (see Step 2 above)
+# Verify
+minikube version
+kubectl version --client
+```
+
+**Solution (macOS/Linux):**
+```bash
+# Verify installation
+which kubectl
+which minikube
+
+# If not found, reinstall (see installation steps above)
 ```
 
 ---
