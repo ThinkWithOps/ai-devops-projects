@@ -248,9 +248,13 @@ exist in Docker Hub or your registry.
 
 ### Prerequisites
 
-- Docker Desktop installed
+- **Docker Desktop** installed **and running** (very important!)
 - Python 3.8 or higher
 - 8GB RAM minimum (16GB recommended for Minikube)
+
+> **⚠️ Windows Users:**  
+> Docker Desktop MUST be running before you start Minikube!  
+> Look for the whale icon in your system tray - it should be solid, not blinking.
 
 ---
 
@@ -480,7 +484,27 @@ minikube delete
 
 ## 🔧 Troubleshooting
 
-### Issue: "kubectl: command not found" or "minikube: command not found"
+### Windows-Specific Issues
+
+**Issue: "Unable to pick a default driver" or "docker: Not healthy"**
+
+**Solution:**
+Docker Desktop is not running!
+
+1. Open Docker Desktop from Start menu
+2. Wait for it to fully start (whale icon in system tray should be solid)
+3. Verify Docker is running:
+   ```bash
+   docker version
+   ```
+4. Then try again:
+   ```bash
+   minikube start
+   ```
+
+---
+
+**Issue: "kubectl: command not found" or "minikube: command not found" in GitBash (Windows)
 
 **Solution (Windows GitBash users):**
 
