@@ -30,7 +30,7 @@ class K8sDebugger:
         """Check if kubectl is installed and accessible."""
         try:
             result = subprocess.run(
-                ["kubectl", "version", "--client", "--short"],
+                ["kubectl", "version", "--client"],
                 capture_output=True,
                 text=True,
                 check=False
