@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: crash-pod
+  labels:
+    app: demo-crash
+spec:
+  containers:
+  - name: crasher
+    image: busybox:latest
+    command: ["sh", "-c", "echo 'Starting application...'; sleep 2; echo 'Error: Application crashed!'; exit 1"]
+  restartPolicy: Always
