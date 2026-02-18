@@ -340,6 +340,7 @@ minikube   Ready    control-plane   1m    v1.28.3
 - **Windows**: If it fails, try: `minikube start --driver=docker`
 - **Low memory**: Try: `minikube start --memory=4096 --cpus=2`
 - **Already running**: Try: `minikube delete` then `minikube start`
+- **Stuck on "Pulling base image"**: See troubleshooting section below
 
 ---
 
@@ -528,6 +529,25 @@ which minikube
 
 # If not found, reinstall (see installation steps above)
 ```
+
+---
+
+### Issue: Minikube hangs on "Pulling base image v0.0.49..."
+
+This happens when minikube tries to re-download the base image even though it's already cached locally.
+
+**Solution:**
+```bash
+# Stop minikube first
+minikube stop
+
+# Start with the explicit base image flag to use the local cached image
+minikube start --base-image=gcr.io/k8s-minikube/kicbase:v0.0.49
+```
+
+> **Note:** You may see a warning: `Failing to connect to https://registry.k8s.io/`
+> This is **not an error** — it just means minikube couldn't check for updates online,
+> but since the image is already cached locally, the cluster will start successfully.
 
 ---
 

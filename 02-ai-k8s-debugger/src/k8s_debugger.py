@@ -203,7 +203,7 @@ class K8sDebugger:
                     "prompt": prompt,
                     "stream": False
                 },
-                timeout=60
+                timeout=180
             )
             
             if response.status_code == 200:
@@ -257,8 +257,21 @@ Provide a diagnosis in this format:
 
 Keep it concise and actionable. If logs show common errors like ImagePullBackOff, CrashLoopBackOff, or OOMKilled, explain those clearly."""
 
-        return self.ask_ollama(prompt)
+        response = self.ask_ollama(prompt)
+        return self._remove_repeated_suffix(response)
     
+    @staticmethod
+    def _remove_repeated_suffix(text: str) -> str:
+        """Remove duplicated trailing content that LLMs sometimes produce."""
+        length = len(text)
+        # Check if the second half repeats any suffix of the first half
+        for split in range(length // 3, length // 2 + 1):
+            first_part = text[:split].rstrip()
+            second_part = text[split:].strip()
+            if second_part and first_part.endswith(second_part):
+                return first_part
+        return text
+
     def generate_fix_command(self, pod: Dict, diagnosis: str) -> Optional[str]:
         """
         Generate kubectl command to help fix the issue.
