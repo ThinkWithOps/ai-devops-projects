@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-**YouTube Tutorial:** [Watch the full walkthrough](#) *(link coming soon)*
+**YouTube Tutorial:** [Watch the full walkthrough](https://youtu.be/LFF-987-uhA)
 
 ---
 
@@ -611,7 +611,7 @@ curl http://localhost:11434/api/tags
 
 ## 🎬 YouTube Video
 
-**Watch the full tutorial:** [Coming Soon]
+**Watch the full tutorial:** [https://youtu.be/LFF-987-uhA]
 
 In the video, I cover:
 - Installing Minikube and kubectl from scratch

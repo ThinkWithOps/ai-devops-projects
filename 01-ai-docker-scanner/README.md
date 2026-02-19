@@ -630,7 +630,7 @@ pip install -r requirements.txt
 
 ## 🎬 YouTube Video
 
-**Watch the full tutorial:** [Coming Soon]
+**Watch the full tutorial:** [https://youtu.be/J6fmU6t9jUU]
 
 In the video, I cover:
 - Installing all tools from scratch
