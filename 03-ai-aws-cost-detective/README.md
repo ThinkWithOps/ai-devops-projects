@@ -292,7 +292,8 @@ saving approximately $75-80/month (60% reduction).
 2. **Click "Users"** → "Create user"
 3. **Username**: `cost-detective`
 4. **Permissions**: Click "Attach policies directly"
-   - Search and select: `ViewOnlyAccess` (safe, read-only)
+   - Search and select: `AWSBillingReadOnlyAccess` (required for Cost Explorer)
+   - Also add: `ViewOnlyAccess` (safe, read-only access to resources)
    - Or create custom policy with these permissions:
      ```json
      {
@@ -531,8 +532,9 @@ curl http://localhost:11434/api/tags
 ### Issue: "Access Denied" errors
 
 **Solution:**
-Your IAM user needs permissions. Add these policies:
-- `ViewOnlyAccess` (easiest, safe)
+Your IAM user needs permissions. Add these policies in IAM → Users → your user → Add permissions:
+- `AWSBillingReadOnlyAccess` (required for Cost Explorer `ce:GetCostAndUsage`)
+- `ViewOnlyAccess` (for reading EC2, S3, RDS, Lambda resource counts)
 - Or custom policy with specific permissions (see Step 2 above)
 
 ---
