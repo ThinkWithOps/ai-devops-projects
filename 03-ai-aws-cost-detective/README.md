@@ -547,6 +547,8 @@ Your IAM user needs permissions. Add these policies in IAM → Users → your us
 ├── requirements.txt          # Python dependencies
 ├── src/
 │   └── aws_cost_detective.py # Main script
+├── demo/
+│   └── february-2026-report.json  # Sample cost report output
 └── .gitignore               # Git ignore (includes AWS credentials!)
 ```
 

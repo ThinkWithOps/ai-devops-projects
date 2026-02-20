@@ -1,0 +1,55 @@
+{
+  "report_date": "2026-02-20T14:30:45.123456",
+  "total_cost": 127.43,
+  "analysis_period_days": 30,
+  "resources": {
+    "ec2_instances": 2,
+    "ebs_volumes": 3,
+    "s3_buckets": 5,
+    "rds_instances": 1,
+    "lambda_functions": 7
+  },
+  "services": [
+    {
+      "service": "Amazon Elastic Compute Cloud",
+      "cost": 89.23,
+      "period": {
+        "Start": "2026-01-21",
+        "End": "2026-02-20"
+      }
+    },
+    {
+      "service": "Amazon Relational Database Service",
+      "cost": 32.5,
+      "period": {
+        "Start": "2026-01-21",
+        "End": "2026-02-20"
+      }
+    },
+    {
+      "service": "Amazon Simple Storage Service",
+      "cost": 5.7,
+      "period": {
+        "Start": "2026-01-21",
+        "End": "2026-02-20"
+      }
+    },
+    {
+      "service": "AWS Lambda",
+      "cost": 0.0,
+      "period": {
+        "Start": "2026-01-21",
+        "End": "2026-02-20"
+      }
+    },
+    {
+      "service": "Amazon CloudWatch",
+      "cost": 0.0,
+      "period": {
+        "Start": "2026-01-21",
+        "End": "2026-02-20"
+      }
+    }
+  ],
+  "ai_analysis": "**COST ANALYSIS:**\nYour primary expense is EC2 at $89.23, suggesting instances running continuously. The RDS cost indicates an oversized database.\n\n**HIDDEN COSTS DETECTED:**\n- EC2 instances running 24/7 when only needed 8 hours/day → $60/month waste\n- RDS db.t3.medium oversized (CPU <15%) → $17/month waste\n- S3 data >90 days old not archived → $4/month waste\n\n**OPTIMIZATION RECOMMENDATIONS:**\n1. Implement EC2 auto-stop/start using Lambda + EventBridge\n2. Downgrade RDS to db.t3.micro for dev environments\n3. Enable S3 lifecycle policies to move old data to Glacier\n4. Set up AWS Budgets alert at $100/month\n\n**ESTIMATED SAVINGS:**\n$75-80/month (60% bill reduction)"
+}
