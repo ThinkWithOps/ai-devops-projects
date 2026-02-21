@@ -1,0 +1,30 @@
+name: Demo Failed Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    - name: Run tests (THIS WILL FAIL)
+      run: |
+        # Intentional error for demo purposes
+        python -m pytest tests/
+        # This fails because pytest is not installed!
