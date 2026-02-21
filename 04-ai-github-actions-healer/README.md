@@ -372,10 +372,18 @@ pip install -r requirements.txt
 $env:GITHUB_TOKEN="your_token_here"
 ```
 
-**macOS/Linux (Bash):**
+**macOS/Linux (Bash) — temporary (current session only):**
 ```bash
 export GITHUB_TOKEN="your_token_here"
 ```
+
+**macOS/Linux (Bash) — permanent (persists across sessions):**
+```bash
+echo 'export GITHUB_TOKEN="paste_your_token_here"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+> **Windows GitBash users:** Use the same `~/.bashrc` commands above — they work in GitBash too.
 
 **Option B: Pass as Argument**
 ```bash
@@ -483,14 +491,16 @@ curl http://localhost:11434/api/tags
 ## 📁 Project Structure
 
 ```
-04-ai-github-actions-healer/
-├── README.md                          # This file
-├── requirements.txt                   # Python dependencies
-├── src/
-│   └── github_actions_healer.py      # Main script
-├── demo/
-│   └── failed-workflow.yml           # Example failing workflow
-└── .gitignore                        # Git ignore (includes token files!)
+ai-devops-projects/                        # Repo root
+├── .github/
+│   └── workflows/
+│       └── failed-workflow.yml            # Demo workflow (fails intentionally for demo)
+└── 04-ai-github-actions-healer/
+    ├── README.md                          # This file
+    ├── requirements.txt                   # Python dependencies
+    ├── src/
+    │   └── github_actions_healer.py      # Main script
+    └── .gitignore                        # Git ignore (includes token files!)
 ```
 
 ---
