@@ -184,7 +184,7 @@ class GitHubActionsHealer:
         if not error_lines:
             error_lines = lines[-50:]
         
-        return '\n'.join(error_lines[:60])  # Limit to 60 lines
+        return '\n'.join(error_lines[:100])  # Limit to 100 lines
     
     def ask_ollama(self, prompt: str) -> str:
         """
@@ -233,21 +233,37 @@ class GitHubActionsHealer:
             AI analysis and recommendations
         """
         # Build context for AI
-        workflow_context = f"Workflow YAML:\n{workflow_file[:500]}\n\n" if workflow_file else ""
+        workflow_context = f"Workflow YAML:\n```yaml\n{workflow_file[:1000]}\n```\n\n" if workflow_file else ""
+        
+        prompt = f"""You are a GitHub Actions expert analyzing a failed CI/CD workflow.
 
-        prompt = f"""GitHub Actions expert. Analyze this failed workflow briefly.
-
+WORKFLOW INFO:
 Workflow: {workflow_name}
-Job: {job_name}
+Failed Job: {job_name}
 
-{workflow_context}Error logs:
-{error_logs[:800]}
+{workflow_context}ERROR LOGS:
+```
+{error_logs[:2000]}
+```
 
-Reply in this format only:
-**ROOT CAUSE:** [1 sentence]
-**WHY:** [1 sentence]
-**FIX:** [2-3 steps]
-**PREVENTION:** [1 sentence]"""
+Analyze this failure and provide recommendations in this format:
+
+**ROOT CAUSE:**
+[Identify the specific error causing the failure]
+
+**WHY THIS HAPPENED:**
+[Explain why this error occurred - use simple analogies if helpful]
+
+**HOW TO FIX:**
+[Provide 3-5 specific, actionable steps to fix this issue]
+
+**YAML CHANGES (if applicable):**
+[Show specific YAML changes needed in the workflow file]
+
+**PREVENTION:**
+[How to prevent this error in the future]
+
+Keep your response concise and specific. Focus on the actual error, not generic advice."""
 
         return self.ask_ollama(prompt)
     
