@@ -21,9 +21,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests
+        pip install requests pytest
 
-    - name: Run tests (THIS WILL FAIL)
+    - name: Run tests 
       run: |
         # Intentional error for demo purposes
         python -m pytest tests/
