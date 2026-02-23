@@ -157,34 +157,66 @@ class GitHubActionsHealer:
     
     def extract_error_from_logs(self, logs: str) -> str:
         """
-        Extract error messages from workflow logs.
+        Extract error messages from workflow logs - IMPROVED to catch all failures.
         
         Args:
             logs: Full log text
             
         Returns:
-            Extracted error portion
+            Extracted error portion with all relevant failures
         """
         lines = logs.split('\n')
-        error_lines = []
-        error_keywords = ['error:', 'failed', 'exception', 'traceback', 
-                         'fatal:', 'err:', '❌', 'cannot', 'unable to']
         
-        # Find lines with errors
+        # Comprehensive error keywords
+        error_keywords = [
+            'error:', 'error ', 'ERROR:', 'ERROR ',
+            'failed', 'failure', 'fail:', 'FAILED',
+            'not found', 'does not exist', 'no such file',
+            'exception', 'traceback', 'Traceback',
+            'fatal:', 'cannot', 'unable to',
+            'exit code', 'returned non-zero',
+            'command not found', 'permission denied'
+        ]
+        
+        error_sections = []
+        seen_lines = set()  # Avoid duplicates
+        
+        # Find all error occurrences
         for i, line in enumerate(lines):
             line_lower = line.lower()
+            
+            # Check if this line contains an error
             if any(keyword in line_lower for keyword in error_keywords):
-                # Get context around error (5 lines before and after)
-                start = max(0, i - 5)
-                end = min(len(lines), i + 6)
-                error_lines.extend(lines[start:end])
-                error_lines.append("---")
+                # Skip if we've already captured this area
+                if i in seen_lines:
+                    continue
+                
+                # Get context (8 lines before and 12 after for full picture)
+                start = max(0, i - 8)
+                end = min(len(lines), i + 12)
+                
+                # Mark these lines as seen
+                for j in range(start, end):
+                    seen_lines.add(j)
+                
+                # Extract section
+                section_lines = lines[start:end]
+                section = '\n'.join(section_lines)
+                
+                error_sections.append(f"--- Error Block {len(error_sections)+1} ---")
+                error_sections.append(section)
+                error_sections.append("")  # Blank line separator
         
-        # If no errors found, get last 50 lines
-        if not error_lines:
-            error_lines = lines[-50:]
-        
-        return '\n'.join(error_lines[:100])  # Limit to 100 lines
+        if error_sections:
+            # Return all error sections (limit to 3 most relevant)
+            result = '\n'.join(error_sections)
+            # Keep it under ~1500 chars for AI processing
+            if len(result) > 1500:
+                result = result[:1500] + "\n... (truncated for brevity)"
+            return result
+        else:
+            # Fallback: return last 40 lines (likely contains the failure)
+            return '\n'.join(lines[-40:])
     
     def ask_ollama(self, prompt: str) -> str:
         """
@@ -204,7 +236,7 @@ class GitHubActionsHealer:
                     "prompt": prompt,
                     "stream": False
                 },
-                timeout=300
+                timeout=120
             )
             
             if response.status_code == 200:
@@ -235,6 +267,9 @@ class GitHubActionsHealer:
         # Build context for AI
         workflow_context = f"Workflow YAML:\n```yaml\n{workflow_file[:1000]}\n```\n\n" if workflow_file else ""
         
+        # Limit log size for faster AI processing
+        limited_logs = error_logs[:1200]
+        
         prompt = f"""You are a GitHub Actions expert analyzing a failed CI/CD workflow.
 
 WORKFLOW INFO:
@@ -243,27 +278,27 @@ Failed Job: {job_name}
 
 {workflow_context}ERROR LOGS:
 ```
-{error_logs[:2000]}
+{limited_logs}
 ```
 
-Analyze this failure and provide recommendations in this format:
+Analyze ALL failures present in the logs and provide recommendations in this format:
 
 **ROOT CAUSE:**
-[Identify the specific error causing the failure]
+[Identify EACH specific error causing the failure - list all if multiple]
 
 **WHY THIS HAPPENED:**
-[Explain why this error occurred - use simple analogies if helpful]
+[Explain why each error occurred - use simple language]
 
 **HOW TO FIX:**
-[Provide 3-5 specific, actionable steps to fix this issue]
+[Provide specific, actionable steps to fix ALL issues found - number them]
 
-**YAML CHANGES (if applicable):**
-[Show specific YAML changes needed in the workflow file]
+**YAML CHANGES:**
+[Show exact YAML changes needed - if applicable]
 
 **PREVENTION:**
-[How to prevent this error in the future]
+[How to prevent these errors in the future]
 
-Keep your response concise and specific. Focus on the actual error, not generic advice."""
+IMPORTANT: If you see multiple errors (e.g., "file not found" AND "command failed"), address BOTH of them. Don't focus on just one issue."""
 
         return self.ask_ollama(prompt)
     
