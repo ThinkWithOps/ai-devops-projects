@@ -23,10 +23,10 @@ jobs:
         cd 04-ai-github-actions-healer
         python -m pip install --upgrade pip
         pip install requests
-        # Intentionally NOT installing pytest - will cause failure!
+        pip install pytest
+       
     
-    - name: Run tests (THIS WILL FAIL)
+    - name: Run tests (THIS WILL PASS)
       run: |
         cd 04-ai-github-actions-healer
-        # This fails because pytest is not installed
         python -m pytest tests/
