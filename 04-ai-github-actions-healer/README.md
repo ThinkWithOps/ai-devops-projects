@@ -500,6 +500,9 @@ ai-devops-projects/                        # Repo root
     ├── requirements.txt                   # Python dependencies
     ├── src/
     │   └── github_actions_healer.py      # Main script
+    ├── tests/
+    │   ├── __init__.py                   # Makes tests a Python package
+    │   └── test_example.py              # Demo test file
     └── .gitignore                        # Git ignore (includes token files!)
 ```
 
