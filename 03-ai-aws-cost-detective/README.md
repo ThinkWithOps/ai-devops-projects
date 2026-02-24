@@ -556,7 +556,7 @@ Your IAM user needs permissions. Add these policies in IAM → Users → your us
 
 ## 🎬 YouTube Video
 
-**Watch the full tutorial:** [Coming Soon]
+**Watch the full tutorial:** [https://youtu.be/rg1Vnjjt9xk]
 
 In the video, I cover:
 - Creating an AWS Free Tier account
