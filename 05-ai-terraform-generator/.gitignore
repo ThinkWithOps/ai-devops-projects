@@ -1,0 +1,14 @@
+# Generated Terraform files (AI output - not committed)
+generated/
+
+# Terraform state and sensitive files
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+
+# Python
+__pycache__/
+*.pyc
+.env
