@@ -3,7 +3,7 @@
 > 12 production-ready projects combining DevOps automation with AI capabilities
 
 **By:** [ThinkWithOps](https://youtube.com/@thinkwithops)  
-**Status:** 🚧 In Progress (3/12 completed)
+**Status:** 🚧 In Progress (5/12 completed)
 
 ---
 
@@ -16,8 +16,8 @@
 | 01 | **[AI Docker Security Scanner](./01-ai-docker-scanner/)** | Scan images, get AI explanations | Docker, Trivy, Ollama, Python | ✅ Complete |
 | 02 | **[AI K8s Pod Debugger](./02-ai-k8s-debugger/)** | AI explains pod crashes | Kubernetes, kubectl, Python | ✅ Complete  |
 | 03 | **[AI AWS Cost Detective](./03-ai-aws-cost-detective/)** | Find hidden AWS costs | AWS, boto3, Ollama, Python | ✅ Complete |
-| 04 | **AI GitHub Actions Healer** | Self-healing CI/CD | GitHub Actions, Python | ⏳ Planned |
-| 05 | **AI Terraform Generator** | Natural language → IaC | Terraform, Python | ⏳ Planned |
+| 04 | **[AI GitHub Actions Healer](./04-ai-github-actions-healer/)** | Self-healing CI/CD | GitHub Actions, Python | ✅ Complete |
+| 05 | **[AI Terraform Generator](./05-ai-terraform-generator/)** | Natural language → IaC | Terraform, Python | ✅ Complete |
 | 06 | **AI Incident Commander** | Auto-respond to incidents | Docker, Prometheus, Python | ⏳ Planned |
 
 ### Phase 2: Advanced (Projects 7-12)
