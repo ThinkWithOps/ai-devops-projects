@@ -11,15 +11,16 @@
 
 ## 📋 Table of Contents
 
-- [Problem Statement](#-problem-statement)
-- [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
-- [Results](#-results)
-- [Challenges & Learnings](#-challenges--learnings)
-- [Installation & Usage](#-installation--usage)
+- [Problem Statement](#problem-statement)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Results](#results)
+- [Challenges & Learnings](#challenges--learnings)
+- [Installation & Usage](#installation--usage)
 
 ---
 
+<a id="problem-statement"></a>
 ## 🎯 Problem Statement
 
 **The Problem:**
@@ -38,6 +39,7 @@ Your production server hits 92% CPU at 2 AM. Instead of spending 2 hours manuall
 
 ---
 
+<a id="tech-stack"></a>
 ## 🛠️ Tech Stack
 
 | Technology | Purpose | Why This Choice |
@@ -55,6 +57,7 @@ Your production server hits 92% CPU at 2 AM. Instead of spending 2 hours manuall
 
 ---
 
+<a id="architecture"></a>
 ## 🏗️ Architecture
 
 ### High-Level Flow
@@ -120,6 +123,7 @@ metrics = {
 
 ---
 
+<a id="results"></a>
 ## 📊 Results
 
 ### Before (Manual Incident Response)
@@ -181,6 +185,7 @@ Long-term Prevention:
 
 ---
 
+<a id="challenges--learnings"></a>
 ## 🧠 Challenges & Learnings
 
 ### Challenges Faced
@@ -227,6 +232,7 @@ Long-term Prevention:
 
 ---
 
+<a id="installation--usage"></a>
 ## 🚀 Installation & Usage
 
 ### Prerequisites
