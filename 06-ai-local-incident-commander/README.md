@@ -279,27 +279,22 @@ pip install -r requirements.txt
 
 ### Step 3: Run Demo!
 
-**Simulate CPU incident:**
-```bash
-python src/incident_commander.py --simulate cpu
-```
-
-**Simulate memory incident:**
-```bash
-python src/incident_commander.py --simulate memory
-```
-
-**Simulate disk incident:**
-```bash
-python src/incident_commander.py --simulate disk
-```
-
-**One-time system check:**
+**1. Check your real system first:**
 ```bash
 python src/incident_commander.py --check
 ```
 
-**Real-time monitoring:**
+**2. Simulate a CPU incident (AI analysis + save report):**
+```bash
+python src/incident_commander.py --simulate cpu --save-report
+```
+
+**3. Open the generated report:**
+```bash
+# Report saved to: incident_logs/report_*.md
+```
+
+**4. Run continuous monitoring:**
 ```bash
 python src/incident_commander.py --monitor
 ```
@@ -321,14 +316,54 @@ python src/incident_commander.py --check
 ✅ No incidents detected. System is healthy!
 
 📊 Current Metrics:
-   CPU: 45%
-   Memory: 62%
-   Disk: 55%
+   CPU: 23%
+   Memory: 61%
+   Disk: 45%
 ```
 
 ---
 
-### Example 2: Real-Time Monitoring
+### Example 2: Simulate CPU Incident + Save Report
+
+```bash
+python src/incident_commander.py --simulate cpu --save-report
+```
+
+**Output:**
+```
+⚠️  HIGH CPU ALERT
+Current CPU: 92%
+Threshold: 80%
+
+🤖 Analyzing CPU incident with AI...
+
+📋 AI Analysis:
+Root Cause: High CPU usage indicates a potential memory leak...
+
+Immediate Actions:
+1. Identify top CPU processes: `top` or `htop`
+2. Check for memory leaks: `ps aux --sort=-%mem`
+3. Consider restarting the problematic service
+
+💾 Report saved to: incident_logs/report_20260302_143015.md
+```
+
+> `--save-report` saves a Markdown report to `incident_logs/report_*.md` — useful for demos and postmortems. Not needed for `--monitor` mode (it auto-saves JSON logs automatically).
+
+---
+
+### Example 3: View Generated Report
+
+```bash
+# Open the report in your editor
+incident_logs/report_*.md
+```
+
+The report includes timestamp, system metrics, incident summary, and full AI analysis — ready to share with your team or use in a postmortem.
+
+---
+
+### Example 4: Real-Time Monitoring
 
 ```bash
 python src/incident_commander.py --monitor
@@ -339,24 +374,15 @@ python src/incident_commander.py --monitor
 👀 Monitoring system every 30 seconds...
 Press Ctrl+C to stop
 
-✅ [14:30:15] System healthy - CPU: 45% | Mem: 55% | Disk: 60%
-✅ [14:30:45] System healthy - CPU: 42% | Mem: 54% | Disk: 60%
+✅ [14:30:15] System healthy - CPU: 23% | Mem: 61% | Disk: 45%
+✅ [14:30:45] System healthy - CPU: 21% | Mem: 62% | Disk: 45%
 ⚠️  [14:31:15] 1 incident detected!
    CRITICAL: Memory usage at 95%
 
    🤖 Analyzing...
    [AI analysis appears]
+   💾 Logged to: incident_logs/incident_20260302_143115.json
 ```
-
----
-
-### Example 3: Simulate CPU Incident (Demo)
-
-```bash
-python src/incident_commander.py --simulate cpu --save-report
-```
-
-> `--save-report` saves a Markdown report to `incident_logs/report_*.md` — useful for demos and postmortems. Not needed for `--monitor` mode (it auto-saves JSON logs automatically).
 
 ---
 
