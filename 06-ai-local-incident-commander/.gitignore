@@ -1,0 +1,7 @@
+# Generated incident logs and reports
+incident_logs/
+
+# Python
+__pycache__/
+*.pyc
+.env
