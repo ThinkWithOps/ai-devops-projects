@@ -18,10 +18,18 @@
 | 03 | **[AI AWS Cost Detective](./03-ai-aws-cost-detective/)** | Find hidden AWS costs | AWS, boto3, Ollama, Python | ✅ Complete |
 | 04 | **[AI GitHub Actions Healer](./04-ai-github-actions-healer/)** | Self-healing CI/CD | GitHub Actions, Python | ✅ Complete |
 | 05 | **[AI Terraform Generator](./05-ai-terraform-generator/)** | Natural language → IaC | Terraform, Python | ✅ Complete |
-| 06 | **AI Incident Commander** | Auto-respond to incidents | Docker, Prometheus, Python | ⏳ Planned |
+| 06 | **[AI Incident Commander](./06-ai-local-incident-commander/)** | Auto-respond to incidents | Ollama, psutil, Python | ✅ Complete |
 
 ### Phase 2: Advanced (Projects 7-12)
-Coming Q2 2026...
+
+| # | Project | What It Does | Tech | Status |
+|---|---------|-------------|------|--------|
+| 07 | **[AI Log Analyzer](./07-ai-log-analyzer/)** | Find root causes in logs instantly | Ollama, Python | ✅ Complete |
+| 08 | **AI CI/CD Optimizer** | Speed up slow pipelines | GitHub Actions, Python | ⏳ Planned |
+| 09 | **AI DB Query Optimizer** | Find and fix slow queries | Python, SQL | ⏳ Planned |
+| 10 | **AI Infrastructure Auditor** | Audit infra for cost + security | AWS, Terraform, Python | ⏳ Planned |
+| 11 | **AI Security Compliance Checker** | Auto-check security policies | Python, AWS | ⏳ Planned |
+| 12 | **AI Deployment Predictor** | Predict deployment risk | Python, ML | ⏳ Planned |
 
 ---
 
