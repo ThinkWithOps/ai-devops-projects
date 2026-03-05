@@ -1,0 +1,8 @@
+# Generated reports
+log_reports/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env

@@ -1,0 +1,13 @@
+{"timestamp":"2024-01-15T14:00:01Z","level":"INFO","service":"payment-api","message":"Server started on port 8080"}
+{"timestamp":"2024-01-15T14:01:23Z","level":"INFO","service":"payment-api","message":"Processing payment request","user_id":"u_12345"}
+{"timestamp":"2024-01-15T14:01:24Z","level":"ERROR","service":"payment-api","message":"Database connection failed: timeout after 30s","db_host":"postgres-primary:5432"}
+{"timestamp":"2024-01-15T14:01:24Z","level":"ERROR","service":"payment-api","message":"Database connection failed: timeout after 30s","db_host":"postgres-replica:5432"}
+{"timestamp":"2024-01-15T14:01:25Z","level":"WARNING","service":"payment-api","message":"Falling back to read replica","attempt":1}
+{"timestamp":"2024-01-15T14:01:30Z","level":"ERROR","service":"payment-api","message":"Payment processing failed: database unavailable","user_id":"u_12345","amount":99.99}
+{"timestamp":"2024-01-15T14:01:31Z","level":"ERROR","service":"payment-api","message":"Database connection failed: timeout after 30s","db_host":"postgres-primary:5432"}
+{"timestamp":"2024-01-15T14:01:32Z","level":"CRITICAL","service":"payment-api","message":"Circuit breaker OPEN: database connection pool exhausted (100/100 connections)"}
+{"timestamp":"2024-01-15T14:01:33Z","level":"ERROR","service":"payment-api","message":"Payment processing failed: circuit breaker open","user_id":"u_67890","amount":249.99}
+{"timestamp":"2024-01-15T14:01:34Z","level":"ERROR","service":"payment-api","message":"Payment processing failed: circuit breaker open","user_id":"u_11111","amount":15.00}
+{"timestamp":"2024-01-15T14:01:35Z","level":"CRITICAL","service":"payment-api","message":"Health check FAILED: /health returning 503"}
+{"timestamp":"2024-01-15T14:01:40Z","level":"INFO","service":"payment-api","message":"Attempting database reconnection","attempt":1}
+{"timestamp":"2024-01-15T14:01:45Z","level":"ERROR","service":"payment-api","message":"Reconnection failed: max retries exceeded"}

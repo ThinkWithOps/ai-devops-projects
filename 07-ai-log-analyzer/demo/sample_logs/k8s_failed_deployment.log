@@ -1,0 +1,18 @@
+2024-01-15T10:23:41Z INFO Starting deployment: api-server v2.1.0
+2024-01-15T10:23:42Z INFO Pulling image: registry.company.com/api-server:v2.1.0
+2024-01-15T10:23:55Z WARNING Slow image pull detected (>10s)
+2024-01-15T10:24:10Z ERROR Failed to pull image "registry.company.com/api-server:v2.1.0": rpc error: code = Unknown desc = failed to pull and unpack image: unexpected status code 401 Unauthorized
+2024-01-15T10:24:10Z ERROR Error: ErrImagePull - pod api-server-7d9f8b-xk2pq
+2024-01-15T10:24:30Z WARNING Back-off pulling image "registry.company.com/api-server:v2.1.0" - ImagePullBackOff
+2024-01-15T10:24:30Z ERROR pod/api-server-7d9f8b-xk2pq: ImagePullBackOff
+2024-01-15T10:24:31Z ERROR pod/api-server-7d9f8b-xp9mn: ImagePullBackOff
+2024-01-15T10:24:32Z ERROR pod/api-server-7d9f8b-rt4lx: ImagePullBackOff
+2024-01-15T10:24:45Z CRITICAL Deployment api-server: 0/3 pods ready (timeout: 60s)
+2024-01-15T10:24:46Z ERROR Liveness probe failed: connection refused - pod api-server-7d9f8b-xk2pq
+2024-01-15T10:24:50Z CRITICAL Service api-server unhealthy: no endpoints available
+2024-01-15T10:25:00Z CRITICAL Deployment api-server failed: pods not ready after 60s
+2024-01-15T10:25:01Z ERROR Initiating rollback: deployment api-server to revision 5
+2024-01-15T10:25:02Z WARNING Rolling back to: registry.company.com/api-server:v2.0.9
+2024-01-15T10:25:10Z ERROR Rollback failed: insufficient replica history
+2024-01-15T10:25:11Z CRITICAL Service api-server: 0 healthy endpoints - ALL PODS FAILING
+2024-01-15T10:25:15Z ERROR HPA api-server: unable to scale - deployment unavailable

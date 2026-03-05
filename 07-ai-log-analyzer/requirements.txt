@@ -1,0 +1,8 @@
+# AI Log Analyzer - Requirements
+
+streamlit>=1.32.0
+
+# Prerequisites (installed separately):
+# - Python 3.11+     https://python.org
+# - Ollama           https://ollama.ai/download
+# - llama3.2 model  (auto-installed on first run: ollama pull llama3.2)

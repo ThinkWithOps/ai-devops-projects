@@ -1,0 +1,19 @@
+2024-01-15 16:45:01 INFO Starting container: web-app-1
+2024-01-15 16:45:02 INFO Container web-app-1 started (PID: 12847)
+2024-01-15 16:45:03 INFO Binding to port 80
+2024-01-15 16:45:10 WARNING Memory usage high: 87% (3.5GB/4GB)
+2024-01-15 16:45:15 WARNING Memory usage critical: 94% (3.76GB/4GB)
+2024-01-15 16:45:20 ERROR Out of memory: Kill process 12847 (node) score 980 or sacrifice child
+2024-01-15 16:45:20 CRITICAL Container web-app-1 killed - OOMKilled
+2024-01-15 16:45:21 ERROR Exit code: 137 (SIGKILL)
+2024-01-15 16:45:22 INFO Restarting container: web-app-1 (restart policy: always)
+2024-01-15 16:45:25 INFO Container web-app-1 started (PID: 12901)
+2024-01-15 16:45:30 WARNING Memory usage high: 89% (3.56GB/4GB)
+2024-01-15 16:45:35 CRITICAL Container web-app-1 killed - OOMKilled
+2024-01-15 16:45:36 ERROR Exit code: 137 (SIGKILL)
+2024-01-15 16:45:37 INFO Restarting container: web-app-1 (restart policy: always) - attempt 2
+2024-01-15 16:45:40 WARNING Memory usage high: 91% (3.64GB/4GB)
+2024-01-15 16:45:45 CRITICAL Container web-app-1 killed - OOMKilled
+2024-01-15 16:45:46 ERROR Exit code: 137 (SIGKILL)
+2024-01-15 16:45:47 ERROR Max restart attempts (3) reached - container in CrashLoopBackOff
+2024-01-15 16:45:48 CRITICAL Service web-app UNAVAILABLE - all containers failed
