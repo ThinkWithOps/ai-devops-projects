@@ -299,7 +299,7 @@ Options:
 
 ## 🎬 YouTube Video
 
-**Watch the full tutorial:** [https://youtu.be/LINK_HERE]
+**Watch the full tutorial:** [https://youtu.be/8PqZA1S0azQ]
 
 ---
 
