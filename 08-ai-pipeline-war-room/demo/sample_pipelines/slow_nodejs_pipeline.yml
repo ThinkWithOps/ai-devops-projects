@@ -1,0 +1,80 @@
+name: Node.js CI
+
+# SECURITY ISSUE: over-permissioned — GITHUB_TOKEN has full write access
+permissions: write-all
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # SECURITY CRITICAL: hardcoded AWS credentials — exposed in Git history
+  AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
+  AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+  # SECURITY CRITICAL: hardcoded Docker password
+  DOCKER_REGISTRY_PASSWORD: Sup3rS3cr3tPassw0rd!
+  NODE_ENV: production
+
+jobs:
+  install-deps:
+    # PERFORMANCE: redundant job — each downstream job reinstalls anyway
+    # SECURITY: this job should be repurposed as a security gate
+    runs-on: ubuntu-latest
+    # PERFORMANCE: no timeout — hung jobs waste runner minutes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          # PERFORMANCE: cache: 'npm' is missing — downloads every time
+      - run: npm install
+
+  lint:
+    needs: install-deps   # PERFORMANCE: sequential — could run parallel with test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - run: npm install   # PERFORMANCE: redundant install #2
+      - run: npm run lint
+      - run: npm run format:check
+
+  test:
+    needs: install-deps   # PERFORMANCE: sequential — could run parallel with lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - run: npm install   # PERFORMANCE: redundant install #3
+      - run: npm test
+      - run: npm run test:coverage
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - run: npm install   # PERFORMANCE: redundant install #4
+      - run: npm run build
+      - name: Build Docker image
+        # PERFORMANCE: no --cache-from — full rebuild every run (2-4 min)
+        # SECURITY: no image scanning (Trivy/Snyk) after build
+        run: docker build -t myapp:latest .
+      - name: Push Docker image
+        run: |
+          echo $DOCKER_REGISTRY_PASSWORD | docker login --username myuser --password-stdin
+          docker push myapp:latest
+      - name: Deploy to AWS
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws ecs update-service --cluster prod --service myapp --force-new-deployment

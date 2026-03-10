@@ -1,0 +1,74 @@
+name: Python API CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# SECURITY ISSUE: individual write permission — broader than needed
+permissions:
+  contents: write
+  packages: write
+
+env:
+  # SECURITY CRITICAL: hardcoded Docker registry password
+  DOCKER_PASSWORD: myDockerP@ssw0rd123
+  # SECURITY HIGH: hardcoded API token
+  DEPLOY_API_TOKEN: ghp_ABCDEF1234567890ABCDEF1234567890ABCDE
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    # PERFORMANCE: no timeout-minutes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          # PERFORMANCE: cache: 'pip' missing
+      - run: pip install -r requirements.txt     # install #1
+      - run: pip install flake8 black isort      # install #2 (separate)
+      - run: flake8 src/
+      - run: black --check src/
+      - run: isort --check-only src/
+
+  test:
+    needs: lint   # PERFORMANCE: sequential — test waits for lint unnecessarily
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt     # install #3 (redundant)
+      - run: pip install pytest pytest-cov
+      - run: pytest tests/ --cov=src --cov-report=xml
+
+  security:
+    needs: lint   # PERFORMANCE: sequential — security waits for lint unnecessarily
+    runs-on: ubuntu-latest
+    # SECURITY: only runs bandit — no secret scanning (gitleaks/trufflehog)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt     # install #4 (redundant)
+      - run: pip install bandit safety
+      - run: bandit -r src/
+      - run: safety check
+
+  build:
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        # PERFORMANCE: no --cache-from — full rebuild every run
+        # SECURITY: no Trivy/Snyk scan after build
+        run: docker build -t api:latest .
+      - name: Push to registry
+        run: |
+          echo $DOCKER_PASSWORD | docker login registry.company.com --username ci --password-stdin
+          docker push registry.company.com/api:latest

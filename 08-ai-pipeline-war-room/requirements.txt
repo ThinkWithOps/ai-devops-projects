@@ -1,0 +1,8 @@
+# AI Pipeline War Room - Requirements
+
+rich>=13.7.0
+
+# Prerequisites (installed separately):
+# - Python 3.11+     https://python.org
+# - Ollama           https://ollama.ai/download
+# - llama3.2 model   ollama pull llama3.2
