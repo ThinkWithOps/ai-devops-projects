@@ -3,7 +3,7 @@
 > 12 production-ready projects combining DevOps automation with AI capabilities
 
 **By:** [ThinkWithOps](https://youtube.com/@thinkwithops)  
-**Status:** 🚧 In Progress (8/12 completed)
+**Status:** 🚧 In Progress (9/12 completed)
 
 ---
 
@@ -26,7 +26,7 @@
 |---|---------|-------------|------|--------|
 | 07 | **[AI Log Analyzer](./07-ai-log-analyzer/)** | Find root causes in logs instantly | Ollama, Python | ✅ Complete |
 | 08 | **[AI Pipeline War Room](./08-ai-pipeline-war-room/)** | 3 agents fight over your pipeline — Commander resolves | asyncio, Rich, Ollama, Python | ✅ Complete |
-| 09 | **AI DB Query Optimizer** | Find and fix slow queries | Python, SQL | ⏳ Planned |
+| 09 | **[AI DB Query Optimizer](./09-ai-db-query-optimizer/)** | Find slow queries, AI diagnoses + rewrites SQL | Streamlit, PostgreSQL, Ollama, Python | ✅ Complete |
 | 10 | **AI Infrastructure Auditor** | Audit infra for cost + security | AWS, Terraform, Python | ⏳ Planned |
 | 11 | **AI Security Compliance Checker** | Auto-check security policies | Python, AWS | ⏳ Planned |
 | 12 | **AI Deployment Predictor** | Predict deployment risk | Python, ML | ⏳ Planned |
