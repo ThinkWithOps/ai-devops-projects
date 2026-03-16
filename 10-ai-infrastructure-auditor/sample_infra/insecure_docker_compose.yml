@@ -1,0 +1,92 @@
+# ============================================================
+# INTENTIONALLY INSECURE Docker Compose File
+# FOR DEMO / EDUCATION PURPOSES ONLY
+# Each issue is commented to explain why it is dangerous.
+# ============================================================
+
+version: "3.8"
+
+services:
+
+  webapp:
+    # ISSUE: :latest image tag
+    # Unpinned image means the container runtime may pull a different
+    # version on each deployment. Breaks reproducibility and rollbacks.
+    image: nginx:latest
+
+    # ISSUE: privileged: true
+    # Grants the container full access to the host's devices and kernel.
+    # Can be used to escape the container and compromise the host OS.
+    # This is almost never required — remove it.
+    privileged: true
+
+    # ISSUE: No user defined
+    # Without a 'user' directive, the container starts as root (UID 0)
+    # by default (unless the Docker image overrides this).
+    # A compromised root container is a compromised host.
+    # user: "1000:1000"  <-- this line is intentionally missing
+
+    ports:
+      # ISSUE: Port bound to 0.0.0.0
+      # Binding to 0.0.0.0 exposes the port on ALL network interfaces,
+      # including public-facing NICs. For internal services, always bind
+      # to 127.0.0.1 to restrict access to localhost only.
+      - "0.0.0.0:8080:80"
+
+    environment:
+      APP_ENV: production
+      # ISSUE: Hardcoded secret in environment variable
+      # This password will be stored in docker-compose.yml and committed
+      # to Git version control. Anyone with repo access — or who forks
+      # the repo — will have this password permanently in history.
+      # Use Docker secrets or reference from a .env file instead.
+      DB_PASSWORD: SuperSecret123
+      APP_SECRET_KEY: my-super-secret-key-do-not-share
+
+    # ISSUE: No resource limits
+    # Without deploy.resources.limits, this container can consume
+    # unlimited CPU and memory — starving other services on the host.
+    # deploy:         <-- intentionally omitted
+    #   resources:
+    #     limits:
+    #       cpus: "0.5"
+    #       memory: 256M
+
+    # ISSUE: No healthcheck
+    # Docker has no way to determine if the application inside the
+    # container is actually responsive. If the app crashes but the
+    # process stays alive, Docker will keep routing traffic to it.
+    # healthcheck:    <-- intentionally omitted
+    #   test: ["CMD", "curl", "-f", "http://localhost/"]
+    #   interval: 30s
+
+  db:
+    # ISSUE: :latest image tag (same problem as above)
+    image: postgres:latest
+
+    # ISSUE: No user defined
+    # postgres image defaults to the postgres user (UID 70 in Alpine),
+    # but no explicit least-privilege user is enforced here.
+
+    # ISSUE: Hardcoded database credentials
+    # These environment variables contain the actual database password.
+    # Committing this to source control is a critical security violation.
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: SuperSecret123
+      POSTGRES_DB: appdb
+
+    ports:
+      # ISSUE: Database port exposed to all interfaces
+      # Postgres should NEVER be directly exposed outside the Docker
+      # network. Binding 5432 to 0.0.0.0 makes your database accessible
+      # to anyone who can reach the host machine.
+      - "0.0.0.0:5432:5432"
+
+    # ISSUE: No resource limits
+    # An unconstrained database can exhaust all host memory during
+    # bulk inserts or query storms, causing the entire host to OOM.
+
+    # ISSUE: No healthcheck
+    # Without a healthcheck, dependent services (webapp) may start
+    # before the database is ready, causing connection errors.

@@ -1,0 +1,91 @@
+# ============================================================
+# INTENTIONALLY INSECURE Kubernetes Deployment
+# FOR DEMO / EDUCATION PURPOSES ONLY
+# Each issue is commented to explain why it is dangerous.
+# ============================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insecure-web-app
+  namespace: default
+  labels:
+    app: web-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      # ISSUE: hostNetwork: true
+      # The pod shares the host's network namespace.
+      # This lets the container sniff ALL network traffic on the node,
+      # including traffic from other pods and the host OS.
+      # Only CNI plugins and very specific system components ever need this.
+      hostNetwork: true
+
+      containers:
+        - name: web-app
+          # ISSUE: :latest image tag
+          # The "latest" tag is mutable — the image that gets pulled today
+          # may not be the same one pulled tomorrow. This leads to
+          # unexpected behavior and makes rollbacks impossible.
+          image: nginx:latest
+
+          ports:
+            - containerPort: 80
+
+          securityContext:
+            # ISSUE: privileged: true
+            # This gives the container FULL ACCESS to the host kernel.
+            # Equivalent to running as root directly on the node.
+            # A compromised container with privileged: true can escape
+            # the container entirely and own the underlying host.
+            privileged: true
+
+            # ISSUE: runAsUser: 0
+            # Explicitly runs as root (UID 0).
+            # If the container escapes, the attacker has root on the host.
+            # Always run as a non-zero UID in production.
+            runAsUser: 0
+
+            # ISSUE: allowPrivilegeEscalation: true (default)
+            # Allows setuid binaries inside the container to escalate to root.
+            # An attacker can exploit setuid programs (e.g. sudo, su) to gain
+            # higher privileges even if the container starts as a normal user.
+            allowPrivilegeEscalation: true
+
+            # ISSUE: readOnlyRootFilesystem not set (defaults to false)
+            # Writable root filesystem lets attackers modify binaries,
+            # write backdoors, or tamper with application code at runtime.
+            # readOnlyRootFilesystem: true  <-- this line is intentionally missing
+
+          # ISSUE: No resource limits
+          # Without CPU/memory limits, this container can consume ALL
+          # resources on the node, starving other pods (noisy neighbor).
+          # In a memory pressure situation, the kernel OOM killer will
+          # terminate random processes — possibly critical system components.
+          # resources:        <-- intentionally omitted
+          #   limits:
+          #     cpu: "500m"
+          #     memory: "256Mi"
+
+---
+# A basic Service for completeness
+apiVersion: v1
+kind: Service
+metadata:
+  name: insecure-web-app-svc
+  namespace: default
+spec:
+  selector:
+    app: web-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
