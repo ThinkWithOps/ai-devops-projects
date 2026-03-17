@@ -1,0 +1,133 @@
+# =============================================================================
+# Sample Ecommerce App — Kubernetes Deployments
+# INTENTIONALLY INSECURE — for audit demo purposes only
+# DO NOT use in production
+# =============================================================================
+
+---
+# ---------------------------------------------------------------------------
+# Frontend Deployment — nginx
+# ISSUES: nginx:latest, no resource limits, runAsUser: 0, allowPrivilegeEscalation: true
+# ---------------------------------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: nginx:latest          # ISSUE: LOW — unpinned :latest tag
+          ports:
+            - containerPort: 80
+          securityContext:
+            runAsUser: 0               # ISSUE: CRITICAL — explicitly runs as root (UID 0)
+            allowPrivilegeEscalation: true  # ISSUE: HIGH — allows setuid privilege escalation
+            # ISSUE: no readOnlyRootFilesystem
+            # ISSUE: no runAsNonRoot: true
+          # ISSUE: MEDIUM — no resource limits defined
+          # resources:
+          #   limits:
+          #     cpu: "200m"
+          #     memory: "128Mi"
+
+---
+# ---------------------------------------------------------------------------
+# Backend Deployment — FastAPI
+# ISSUES: python:3.11 (no patch version), privileged: true, no limits, hostNetwork: true
+# ---------------------------------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      hostNetwork: true              # ISSUE: CRITICAL — pod shares host network stack
+      containers:
+        - name: backend
+          image: python:3.11         # ISSUE: no patch version pinned
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: true         # ISSUE: CRITICAL — full kernel access from container
+            # ISSUE: no runAsNonRoot
+            # ISSUE: no readOnlyRootFilesystem
+          env:
+            - name: DB_HOST
+              value: "database"
+            - name: DB_PORT
+              value: "5432"
+          # ISSUE: MEDIUM — no resource limits
+          # resources:
+          #   limits:
+          #     cpu: "500m"
+          #     memory: "256Mi"
+
+---
+# ---------------------------------------------------------------------------
+# Database Deployment — PostgreSQL
+# ISSUES: postgres:latest, runAsUser: 0, no resource limits
+# ---------------------------------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  labels:
+    app: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: postgres:latest      # ISSUE: LOW — unpinned :latest tag
+          ports:
+            - containerPort: 5432
+          securityContext:
+            runAsUser: 0              # ISSUE: CRITICAL — explicitly runs as root
+            # ISSUE: allowPrivilegeEscalation defaults to true
+            # ISSUE: no readOnlyRootFilesystem
+          env:
+            - name: POSTGRES_DB
+              value: "shopdb"
+            - name: POSTGRES_USER
+              value: "shopuser"
+            - name: POSTGRES_PASSWORD
+              value: "ShopAdmin2024!" # ISSUE: CRITICAL — hardcoded password in manifest
+          # ISSUE: MEDIUM — no resource limits
+          # resources:
+          #   limits:
+          #     cpu: "1000m"
+          #     memory: "512Mi"
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: db-storage
+          emptyDir: {}

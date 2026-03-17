@@ -96,7 +96,7 @@ def audit_docker_compose(content: str) -> list[dict]:
                 ):
                     findings.append(
                         {
-                            "title": f"Hardcoded {label} in environment: '{svc_name}'",
+                            "title": f"Hardcoded {label} ({key}): '{svc_name}'",
                             "severity": "CRITICAL",
                             "detail": (
                                 f"Service '{svc_name}' has a hardcoded {label} in the "

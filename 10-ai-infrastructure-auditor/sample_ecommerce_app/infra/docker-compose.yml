@@ -1,0 +1,89 @@
+# =============================================================================
+# Sample Ecommerce App — Docker Compose
+# INTENTIONALLY INSECURE — for audit demo purposes only
+# DO NOT use in production
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Frontend — nginx serving static assets
+  # ISSUE: uses nginx:latest (unpinned), no user field, no healthcheck
+  # ---------------------------------------------------------------------------
+  frontend:
+    image: nginx:latest        # ISSUE: :latest tag — unpinned, mutable image
+    ports:
+      - "80:80"
+    volumes:
+      - ../frontend:/usr/share/nginx/html:ro
+    # ISSUE: no user field — container runs as root by default
+    # ISSUE: no resource limits — can starve other services
+    # ISSUE: no healthcheck — Docker cannot detect if nginx is healthy
+
+  # ---------------------------------------------------------------------------
+  # Backend — FastAPI application
+  # ISSUE: privileged: true, hardcoded secrets, no user, no healthcheck
+  # ---------------------------------------------------------------------------
+  backend:
+    image: python:latest       # ISSUE: :latest tag — unpinned, mutable image
+    privileged: true           # ISSUE: CRITICAL — full host kernel access
+    working_dir: /app
+    volumes:
+      - ../backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      # ISSUE: CRITICAL — hardcoded database password committed to Git
+      DB_PASSWORD: ShopAdmin2024!
+      # ISSUE: CRITICAL — hardcoded Redis password committed to Git
+      REDIS_PASSWORD: redis123
+      # ISSUE: CRITICAL — live Stripe secret key hardcoded in source
+      STRIPE_SECRET_KEY: sk_live_abc123fakekey
+      DB_HOST: database
+      DB_PORT: "5432"
+      DB_NAME: shopdb
+      REDIS_HOST: redis
+    command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    depends_on:
+      - database
+      - redis
+    # ISSUE: no user field — container runs as root
+    # ISSUE: no resource limits
+    # ISSUE: no healthcheck
+
+  # ---------------------------------------------------------------------------
+  # Database — PostgreSQL
+  # ISSUE: port exposed to 0.0.0.0, latest image, no user, no healthcheck
+  # ---------------------------------------------------------------------------
+  database:
+    image: postgres:latest     # ISSUE: :latest tag — unpinned
+    # ISSUE: HIGH — port bound to all interfaces, database directly reachable
+    ports:
+      - "0.0.0.0:5432:5432"
+    environment:
+      POSTGRES_DB: shopdb
+      # ISSUE: CRITICAL — hardcoded password in environment
+      POSTGRES_PASSWORD: ShopAdmin2024!
+      POSTGRES_USER: shopuser
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    # ISSUE: no user field — Postgres process runs as postgres but container started as root
+    # ISSUE: no resource limits — DB can consume all node memory
+    # ISSUE: no healthcheck — other services may start before DB is ready
+
+  # ---------------------------------------------------------------------------
+  # Cache — Redis
+  # ISSUE: latest image, no user, no healthcheck, no resource limits
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:latest        # ISSUE: :latest tag — unpinned
+    ports:
+      - "6379:6379"
+    # ISSUE: no user field
+    # ISSUE: no resource limits
+    # ISSUE: no healthcheck
+
+volumes:
+  db_data:

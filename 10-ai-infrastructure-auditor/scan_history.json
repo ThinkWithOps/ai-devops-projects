@@ -1,0 +1,102 @@
+[
+  {
+    "scanned_at": "2026-03-16T21:04:41.585137",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  },
+  {
+    "scanned_at": "2026-03-16T20:40:59.726260",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  },
+  {
+    "scanned_at": "2026-03-16T20:30:46.400295",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  },
+  {
+    "scanned_at": "2026-03-16T20:28:43.640680",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  },
+  {
+    "scanned_at": "2026-03-16T20:22:28.252172",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  },
+  {
+    "scanned_at": "2026-03-16T18:54:50.829711",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  },
+  {
+    "scanned_at": "2026-03-16T18:53:15.373084",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor",
+    "total_findings": 72,
+    "critical": 21,
+    "high": 18,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 8
+  },
+  {
+    "scanned_at": "2026-03-16T18:51:47.825648",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  },
+  {
+    "scanned_at": "2026-03-16T18:51:43.116313",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  },
+  {
+    "scanned_at": "2026-03-16T18:51:34.369810",
+    "workspace": "D:\\workspace\\ThinkWithOps\\ai-devops-projects\\10-ai-infrastructure-auditor\\sample_ecommerce_app\\infra",
+    "total_findings": 44,
+    "critical": 11,
+    "high": 11,
+    "score": 0,
+    "grade": "F",
+    "files_scanned": 5
+  }
+]

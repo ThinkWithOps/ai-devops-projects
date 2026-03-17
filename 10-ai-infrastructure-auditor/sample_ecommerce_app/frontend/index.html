@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopAI — Demo Store</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+    h1 { color: #333; }
+    .product { border: 1px solid #ddd; border-radius: 6px; padding: 12px 16px; margin: 8px 0; }
+    .product h3 { margin: 0 0 4px; }
+    .price { color: #0070f3; font-weight: bold; }
+    .category { font-size: 0.85em; color: #888; }
+    #status { color: #e44; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>ShopAI — Demo Store</h1>
+  <p id="status">Loading products...</p>
+  <div id="products"></div>
+
+  <script>
+    fetch("http://localhost:8000/products")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("status").textContent =
+          `${data.total} products available`;
+        const container = document.getElementById("products");
+        data.products.forEach(p => {
+          const div = document.createElement("div");
+          div.className = "product";
+          div.innerHTML = `
+            <h3>${p.name}</h3>
+            <span class="price">$${p.price.toFixed(2)}</span>
+            <span class="category"> — ${p.category}</span>
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch(() => {
+        document.getElementById("status").textContent =
+          "Could not load products — is the backend running?";
+      });
+  </script>
+</body>
+</html>
